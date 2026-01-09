@@ -5,21 +5,19 @@ const panel = document.querySelector('#panel')
 let selectedRating = 'Satisfied'
 
 ratingsContainer.addEventListener('click', (e) => {
-    if(e.target.parentNode.classList.contains('rating') && e.target.nextElementSibling) {
-        removeActive()
-        e.target.parentNode.classList.add('active')
-        selectedRating = e.target.nextElementSibling.innerHTML
-    } else if(
-        e.target.parentNode.classList.contains('rating') &&
-        e.target.previousSibling &&
-        e.target.previousElementSibling.nodeName === 'IMG'
-    ) {
-        removeActive()
-        e.target.parentNode.classList.add('active')
-        selectedRating = e.target.innerHTML
-    }
+    // 核心改进:不管点到谁，都向上找到最近的那个 class 为 rating 的 div
+    const ratingDiv = e.target.closest('.rating');
 
-})
+    // 如果点的地方不在 .rating 内部，就什么都不做
+    if (!ratingDiv) return;
+
+    // 1. 切换样式
+    removeActive();
+    ratingDiv.classList.add('active');
+
+    // 2. 获取评价内容
+    selectedRating = ratingDiv.querySelector('small').innerHTML;
+});
 
 sendBtn.addEventListener('click', (e) => {
     panel.innerHTML = `
